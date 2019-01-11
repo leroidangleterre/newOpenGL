@@ -4,22 +4,29 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 
 import static android.content.ContentValues.TAG;
 
 class HelloOpenGLES10SurfaceView extends GLSurfaceView {
 
     Empty empty;
+    OpenGLRenderer renderer;
 
     public HelloOpenGLES10SurfaceView(Context context, Empty e) {
         super(context);
         empty = e;
-//        // Set the Renderer for drawing on the GLSurfaceView
-//        OpenGLRenderer renderer = new OpenGLRenderer(getWidth(), getHeight());
-//        renderer.setEmpty(e);
-//        setRenderer(renderer);
+        renderer = new OpenGLRenderer();
+        renderer.setEmpty(e);
+        setRenderer(renderer);
+    }
 
+    /**
+     * Transmit the dimension information to the renderer.
+     * @param width
+     * @param height
+     */
+    public void setDimensions(int width, int height){
+        renderer.setDimensions(width, height);
     }
 
     @Override
@@ -36,6 +43,11 @@ class HelloOpenGLES10SurfaceView extends GLSurfaceView {
 //        }
 
         return false;
+    }
+
+
+    public void addMesh(Mesh newMesh) {
+        renderer.addMesh(newMesh);
     }
 
 

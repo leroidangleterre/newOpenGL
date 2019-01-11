@@ -15,15 +15,15 @@
  */
 package com.example.arthurmanoha.tutorial;
 
+import android.graphics.Bitmap;
+import android.opengl.GLUtils;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
-
-import android.graphics.Bitmap;
-import android.opengl.GLUtils;
 
 /**
  * Mesh is a base class for 3D objects making it easier to create and maintain
@@ -137,6 +137,7 @@ public class Mesh {
 
 		// Disable face culling.
 		gl.glDisable(GL10.GL_CULL_FACE);
+		gl.glTranslatef(-x, -y, -z);
 	}
 
 	/**
@@ -175,8 +176,8 @@ public class Mesh {
 	 * 
 	 * @param textureCoords
 	 */
-	protected void setTextureCoordinates(float[] textureCoords) { // New
-																	// function.
+	protected void setTextureCoordinates(float[] textureCoords) {
+
 		// float is 4 bytes, therefore we multiply the number if
 		// vertices with 4.
 		ByteBuffer byteBuf = ByteBuffer
@@ -231,7 +232,7 @@ public class Mesh {
 	 * 
 	 * @param gl
 	 */
-	private void loadGLTexture(GL10 gl) { // New function
+	private void loadGLTexture(GL10 gl) {
 		// Generate one texture pointer...
 		int[] textures = new int[1];
 		gl.glGenTextures(1, textures, 0);

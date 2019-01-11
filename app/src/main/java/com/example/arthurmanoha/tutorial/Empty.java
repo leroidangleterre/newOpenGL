@@ -23,8 +23,8 @@ public class Empty {
         resetRotation();
         width = 0.3f;
         resetRotation();
-        computeLeftRightPos();
         distanceToTarget = 1;
+        computeLeftRightPos();
     }
 
     public Empty clone() {
@@ -53,10 +53,6 @@ public class Empty {
     private void computeLeftRightPos() {
         posLeft = pos.sum(left.mult(width));
         posRight = pos.sum(left.mult(-width));
-//        posLeft = pos.sum(left.mult(-1));
-//        posRight = pos.sum(left.mult(1));
-//        posLeft = pos.clone();
-//        posRight = pos.clone();
     }
 
     /**
@@ -129,19 +125,6 @@ public class Empty {
     public Vector getPos() {
         return pos;
     }
-
-//    /**
-//     * Set the position of the target.
-//     */
-//    public void setTarget(float x, float y, float z) {
-//        target = new Vector(x, y, z);
-//        computeLeftRightPos();
-//    }
-//
-//    public void setVertic(float x, float y, float z) {
-//        vertic = new Vector(x, y, z);
-//        computeLeftRightPos();
-//    }
 
     /**
      * Get the position of a point located on the left of this empty.
@@ -234,11 +217,9 @@ public class Empty {
      * @param newTarget the new target
      */
     public void centerOnTarget(Vector newTarget) {
-        Vector diff = newTarget.diff(pos.sum(target));
-//        Log.d(TAG, "centerOnTarget: pos is " + pos + ", target is " + target + ", diff is " + diff);
 
+        Vector diff = newTarget.diff(pos.sum(target));
         pos.add(diff);
-//        Log.d(TAG, "centerOnTarget: new target norm: " + target.getNorm());
         computeLeftRightPos();
     }
 
