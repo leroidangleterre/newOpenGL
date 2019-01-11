@@ -4,7 +4,6 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 
 import static android.content.ContentValues.TAG;
 
@@ -16,7 +15,6 @@ class HelloOpenGLES10SurfaceView extends GLSurfaceView {
     public HelloOpenGLES10SurfaceView(Context context, Empty e) {
         super(context);
         empty = e;
-//        renderer = new OpenGLRenderer(getWidth(), getHeight());
         renderer = new OpenGLRenderer();
         renderer.setEmpty(e);
         setRenderer(renderer);

@@ -15,25 +15,21 @@
  */
 package com.example.arthurmanoha.tutorial;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.graphics.BitmapFactory;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import static java.lang.Math.PI;
-import static java.lang.Math.log;
 
 /**
  * This class is the setup for the Tutorial part VI located at:
@@ -45,7 +41,6 @@ public class TutorialPartVI extends Activity {
 
     private String TAG = "androidMain";
 
-    //    private GLSurfaceView view;
     private HelloOpenGLES10SurfaceView view;
     private Empty userEmpty;
 
@@ -65,15 +60,14 @@ public class TutorialPartVI extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
 
         userEmpty = new Empty();
-        userEmpty.setPos(-10, 0, 0);
-        userEmpty.setTarget(10, 0, 0);
+        userEmpty.setPos(0, 0, 0);
 
         // Remove the title bar from the window.
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         // Make the windows into full screen mode.
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -85,29 +79,38 @@ public class TutorialPartVI extends Activity {
 
 
         // Create a OpenGL view.
-        view = new HelloOpenGLES10SurfaceView(this, userEmpty);
-
+        if (view == null) {
+            view = new HelloOpenGLES10SurfaceView(this, userEmpty);
+        }
         setContentView(view);
 
         // Get the dimensions of the screen.
         Display display = getWindowManager().getDefaultDisplay();
         Point screenSize = new Point();
         display.getSize(screenSize);
-        Log.d(TAG, "onCreate: arthur size is " + screenSize.x + ", " + screenSize.y);
         view.setDimensions(screenSize.x, screenSize.y);
 
 
-        // Create a new plane.
-        SimplePlane plane = new SimplePlane(1, 1);
+        final Resources res = getResources();
 
-        // Move and rotate the plane.
-        plane.z = 1.7f;
-        plane.rx = -65;
+        // Create the terrain within a thread.
+        new Thread() {
+            int size = 10;
 
-        // Load the texture.
-        plane.loadBitmap(BitmapFactory.decodeResource(getResources(),
-                R.drawable.grass));
-//				R.drawable.jay));
+            @Override
+            public void run() {
+                super.run();
+                for (int i = -size; i <= size; i++) {
+                    for (int j = -size; j <= size; j++) {
+                        // Front
+                        view.addMesh(new CubeEarth(1, -10, 1.1f * j, 1.1f * i, res));
+                        // Ground
+                        view.addMesh(new CubeEarth(1, 1.1f * j, 1.1f * i, -10, res));
+                    }
+                }
+
+            }
+        }.start();
 
 
         rotationMatrix = new float[16];
@@ -124,11 +127,7 @@ public class TutorialPartVI extends Activity {
                 userEmpty.resetRotation();
                 userEmpty.rotateGlobalY((float) (-orientations[2] + PI / 2));
                 userEmpty.rotateGlobalX(orientations[1]);
-                userEmpty.rotateGlobalZAroundTarget(-orientations[0]);
-//                Log.d(TAG, "onSensorChanged: "
-//                        + (180 / PI) * orientations[0] + "°, "
-//                        + (180 / PI) * orientations[1] + "°, "
-//                        + (180 / PI) * orientations[2] + "°");
+                userEmpty.rotateGlobalZ(-orientations[0]);
             }
 
             @Override
@@ -138,7 +137,5 @@ public class TutorialPartVI extends Activity {
         };
         sensorManager.registerListener(rotationListener, rotationVectorSensor, SensorManager.SENSOR_DELAY_GAME);
 
-        // Add the plane to the renderer.
-        view.addMesh(plane);
     }
 }

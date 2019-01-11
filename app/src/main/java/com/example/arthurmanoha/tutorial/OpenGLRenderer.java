@@ -15,14 +15,12 @@
  */
 package com.example.arthurmanoha.tutorial;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
-import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
 import android.util.Log;
-import android.view.Display;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 import static android.content.ContentValues.TAG;
 
@@ -44,13 +42,6 @@ public class OpenGLRenderer implements Renderer {
         Group group = new Group();
         root = group;
         screenPercentage = 0.8f;
-
-        // Create a new plane.
-        SimplePlane plane = new SimplePlane(1, 1);
-
-        // Move and rotate the plane.
-        plane.z = 1.7f;
-        plane.rx = -65;
     }
 
     public OpenGLRenderer(int widthParam, int heightParam) {
@@ -63,7 +54,7 @@ public class OpenGLRenderer implements Renderer {
         width = widthParam;
         height = heightParam;
         ratio = (float) width / (float) height;
-        Log.d(TAG, "OpenGLRenderer: ratio is " + ratio);
+        Log.d(TAG, "OpenGLRenderer: ratio is " + ", " + ratio);
     }
 
     public void setEmpty(Empty e) {
@@ -102,30 +93,38 @@ public class OpenGLRenderer implements Renderer {
     public void onDrawFrame(GL10 gl) {
         // Clears the screen and depth buffer.
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-        // Replace the current matrix with the identity matrix
 
-//        Log.d(TAG, "onDrawFrame: width, height = " + width + ", " + height);
-        // Left image
-//        gl.glViewport((int) ((width / 2) * (1 - screenPercentage)),
-//                (int) ((height / 2) * (1 - screenPercentage)),
-//                (int) (screenPercentage * width / 2),
-//                (int) (screenPercentage * height));
-//        Log.d(TAG, "onDrawFrame: wh = " + width + ", " + height);
+        Empty displayEmpty = viewerEmpty.clone();
 
+        float eyeX, eyeY, eyeZ, targetX, targetY, targetZ, verticX, verticY, verticZ;
+
+        eyeX = displayEmpty.getLeftPos().getX();
+        eyeY = displayEmpty.getLeftPos().getY();
+        eyeZ = displayEmpty.getLeftPos().getZ();
+        targetX = displayEmpty.getTarget().getX();
+        targetY = displayEmpty.getTarget().getY();
+        targetZ = displayEmpty.getTarget().getZ();
+        verticX = displayEmpty.getVertic().getX();
+        verticY = displayEmpty.getVertic().getY();
+        verticZ = displayEmpty.getVertic().getZ();
 
         gl.glViewport(0, 0, width / 2, height);
         gl.glLoadIdentity();
-        // Translates 4 units into the screen.
-        gl.glTranslatef(0, 0, -4);
 
-        // Draw our scene.
+        GLU.gluLookAt(gl, eyeX, eyeY, eyeZ, eyeX + targetX, eyeY + targetY, eyeZ + targetZ, verticX, verticY, verticZ);
+
+        // Draw our scene for the left eye.
         root.draw(gl);
 
         gl.glViewport(width / 2, 0, width / 2, height);
         gl.glLoadIdentity();
-        // Translates 4 units into the screen.
-        gl.glTranslatef(0, 0, -4);
-        // Draw our scene.
+
+        eyeX = displayEmpty.getRightPos().getX();
+        eyeY = displayEmpty.getRightPos().getY();
+        eyeZ = displayEmpty.getRightPos().getZ();
+        GLU.gluLookAt(gl, eyeX, eyeY, eyeZ, eyeX + targetX, eyeY + targetY, eyeZ + targetZ, verticX, verticY, verticZ);
+
+        // Draw our scene for the roght eye.
         root.draw(gl);
 
     }
