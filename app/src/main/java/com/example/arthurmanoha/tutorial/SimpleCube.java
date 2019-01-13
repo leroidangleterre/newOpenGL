@@ -32,8 +32,9 @@ public class SimpleCube extends Mesh {
 
     /**
      * Create a cube.
-     *
+     * <p>
      * Define the mesh and the indices but not the texture, which is defined in the subclasses.
+     *
      * @param size the size of the plane.
      */
     public SimpleCube(float size, Resources res) {

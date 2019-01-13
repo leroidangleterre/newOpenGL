@@ -123,12 +123,6 @@ public class TutorialPartVI extends Activity {
                             }
                         }
                     }
-//                    SimplePlane newPlane = new SimplePlane();
-//                    view.addMesh(newPlane);
-//                    SimplePlane newPlane2 = new SimplePlane();
-//                    newPlane2.rx = (float) (PI / 2);
-//                    view.addMesh(newPlane2);
-
                 }
             }.start();
         }
