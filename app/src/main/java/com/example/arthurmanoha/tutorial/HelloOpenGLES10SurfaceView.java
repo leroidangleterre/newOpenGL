@@ -22,10 +22,11 @@ class HelloOpenGLES10SurfaceView extends GLSurfaceView {
 
     /**
      * Transmit the dimension information to the renderer.
+     *
      * @param width
      * @param height
      */
-    public void setDimensions(int width, int height){
+    public void setDimensions(int width, int height) {
         renderer.setDimensions(width, height);
     }
 
@@ -33,14 +34,9 @@ class HelloOpenGLES10SurfaceView extends GLSurfaceView {
     public boolean onTouchEvent(MotionEvent event) {
         Log.d(TAG, "onTouchEvent: " + event.getX() + ", " + event.getY());
 
-//        // Perform an action that depends on the coordinates of the event
-//        int x = (int) event.getX();
-//        int y = (int) event.getY();
-//        if (x >= 900 && x <= 1300 && y >= 900) {
-//            // Bottom center
-//            // Hide the controls.
-//            ((OpenGLRenderer) getContext()).toggleSystemUi();
-//        }
+        // Perform an action that depends on the coordinates of the event
+        int x = (int) event.getX();
+        int y = (int) event.getY();
 
         return false;
     }
