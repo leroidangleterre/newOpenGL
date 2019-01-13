@@ -24,12 +24,14 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.random;
 
 /**
  * This class is the setup for the Tutorial part VI located at:
@@ -48,6 +50,14 @@ public class TutorialPartVI extends Activity {
     Sensor rotationVectorSensor;
     SensorEventListener rotationListener;
     float[] rotationMatrix;
+
+    private final Group root;
+    private boolean isWorldFilled;
+
+    public TutorialPartVI() {
+        root = new Group();
+        isWorldFilled = false;
+    }
 
     /**
      * Called when the activity is first created.
@@ -93,25 +103,35 @@ public class TutorialPartVI extends Activity {
 
         final Resources res = getResources();
 
-        // Create the terrain within a thread.
-        new Thread() {
-            int size = 10;
+        // Create the terrain within a thread, only the first time.
+        if (!isWorldFilled) {
+            new Thread() {
+                int size = 20;
 
-            @Override
-            public void run() {
-                super.run();
-                for (int i = -size; i <= size; i++) {
-                    for (int j = -size; j <= size; j++) {
-                        // Front
-                        view.addMesh(new CubeEarth(1, -10, 1.1f * j, 1.1f * i, res));
-                        // Ground
-                        view.addMesh(new CubeEarth(1, 1.1f * j, 1.1f * i, -10, res));
+                @Override
+                public void run() {
+                    super.run();
+                    for (int i = -size; i <= size; i++) {
+                        for (int j = -size; j <= size; j++) {
+                            // Front
+                            if (random() <= 0.3) {
+                                view.addMesh(new CubeEarth(1, -10, 1.1f * j, 1.1f * i, res));
+                            }
+                            // Ground
+                            if (random() <= 0.3) {
+                                view.addMesh(new CubeEarth(1, 1.1f * j, 1.1f * i, -10, res));
+                            }
+                        }
                     }
+//                    SimplePlane newPlane = new SimplePlane();
+//                    view.addMesh(newPlane);
+//                    SimplePlane newPlane2 = new SimplePlane();
+//                    newPlane2.rx = (float) (PI / 2);
+//                    view.addMesh(newPlane2);
+
                 }
-
-            }
-        }.start();
-
+            }.start();
+        }
 
         rotationMatrix = new float[16];
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
