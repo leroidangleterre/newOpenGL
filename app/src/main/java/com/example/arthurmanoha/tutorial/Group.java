@@ -32,7 +32,7 @@ import static android.content.ContentValues.TAG;
 public class Group extends Mesh {
     private final Vector<Mesh> mChildren = new Vector<Mesh>(100);
 
-    public Group(){
+    public Group() {
         super();
         Log.d(TAG, "Group: new Group()" + this);
     }
