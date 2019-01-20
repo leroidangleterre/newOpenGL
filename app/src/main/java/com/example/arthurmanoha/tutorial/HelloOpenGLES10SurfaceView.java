@@ -13,12 +13,23 @@ class HelloOpenGLES10SurfaceView extends GLSurfaceView {
     OpenGLRenderer renderer;
 
     public HelloOpenGLES10SurfaceView(Context context, Empty e) {
+        this(context, e, new OpenGLRenderer());
+    }
+
+    public HelloOpenGLES10SurfaceView(Context context, Empty e, OpenGLRenderer renderer) {
+
         super(context);
         empty = e;
-        renderer = new OpenGLRenderer();
         renderer.setEmpty(e);
-        setRenderer(renderer);
+//        setRenderer(renderer);
     }
+
+    public void setRenderer(OpenGLRenderer r) {
+        Log.d(TAG, "setRenderer: ");
+        super.setRenderer(r);
+        this.renderer = r;
+    }
+
 
     /**
      * Transmit the dimension information to the renderer.
@@ -27,6 +38,7 @@ class HelloOpenGLES10SurfaceView extends GLSurfaceView {
      * @param height
      */
     public void setDimensions(int width, int height) {
+        Log.d(TAG, "setDimensions: renderer is " + renderer);
         renderer.setDimensions(width, height);
     }
 
@@ -47,4 +59,7 @@ class HelloOpenGLES10SurfaceView extends GLSurfaceView {
     }
 
 
+//    public void addMesh(Mesh newMesh, float x, float y, float z) {
+//        renderer.addMesh(newMesh, x, y, z);
+//    }
 }
