@@ -30,8 +30,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
 import static java.lang.Math.PI;
-import static java.lang.Math.random;
+import static java.lang.Math.log;
 
 /**
  * This class is the setup for the Tutorial part VI located at:
@@ -43,7 +47,8 @@ public class TutorialPartVI extends Activity {
 
     private String TAG = "androidMain";
 
-    private HelloOpenGLES10SurfaceView view;
+    private HelloOpenGLES10SurfaceView view = null;
+    private OpenGLRenderer renderer;
     private Empty userEmpty;
 
     SensorManager sensorManager;
@@ -53,6 +58,10 @@ public class TutorialPartVI extends Activity {
 
     private final Group root;
     private boolean isWorldFilled;
+
+
+    private FloatBuffer triangleVB;
+
 
     public TutorialPartVI() {
         root = new Group();
@@ -71,6 +80,8 @@ public class TutorialPartVI extends Activity {
 
         userEmpty = new Empty();
         userEmpty.setPos(0, 0, 0);
+        userEmpty.setPos(-10, 0, 0);
+        userEmpty.setTarget(10, 0, 0);
 
         // Remove the title bar from the window.
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -89,46 +100,73 @@ public class TutorialPartVI extends Activity {
 
 
         // Create a OpenGL view.
-        if (view == null) {
-            view = new HelloOpenGLES10SurfaceView(this, userEmpty);
-        }
+//        if (view == null) {
+        Log.d(TAG, "onCreate: creating view");
+        renderer = new OpenGLRenderer();
+        view = new HelloOpenGLES10SurfaceView(this, userEmpty, renderer);
+//        }
         setContentView(view);
 
         // Get the dimensions of the screen.
         Display display = getWindowManager().getDefaultDisplay();
         Point screenSize = new Point();
         display.getSize(screenSize);
+        view.setRenderer(renderer);
         view.setDimensions(screenSize.x, screenSize.y);
-
 
         final Resources res = getResources();
 
         // Create the terrain within a thread, only the first time.
         if (!isWorldFilled) {
-            new Thread() {
-                int size = 20;
+//            new Thread() {
+//            int size = 20;
+//            int bufferSize = 800;
+//            float cubeCoords[] = {
+//                    -1.f, 1.f, 1.f,     // Front-top-left
+//                    1.f, 1.f, 1.f,      // Front-top-right
+//                    -1.f, -1.f, 1.f,    // Front-bottom-left
+//                    1.f, -1.f, 1.f,     // Front-bottom-right
+//                    1.f, -1.f, -1.f,    // Back-bottom-right
+//                    1.f, 1.f, 1.f,      // Front-top-right
+//                    1.f, 1.f, -1.f,     // Back-top-right
+//                    -1.f, 1.f, 1.f,     // Front-top-left
+//                    -1.f, 1.f, -1.f,    // Back-top-left
+//                    -1.f, -1.f, 1.f,    // Front-bottom-left
+//                    -1.f, -1.f, -1.f,   // Back-bottom-left
+//                    1.f, -1.f, -1.f,    // Back-bottom-right
+//                    -1.f, 1.f, -1.f,    // Back-top-left
+//                    1.f, 1.f, -1.f      // Back-top-right
+//            };
+//            ByteBuffer vbb = ByteBuffer.allocateDirect(/*bufferSize * */ cubeCoords.length * 4); // # of coordinate values * 4 bytes per float)
+//            vbb.order(ByteOrder.nativeOrder());
+//
+//            renderer.initShapes(vbb);
+//            triangleVB = vbb.asFloatBuffer();
+//            triangleVB.put(cubeCoords);
+//            triangleVB.position(0);
+////
+////            // Include this in a loop for all cubes:
+//            renderer.addCube(cubeCoords);
 
-                @Override
-                public void run() {
-                    super.run();
-                    for (int i = -size; i <= size; i++) {
-                        for (int j = -size; j <= size; j++) {
-                            // Front
-                            if (random() <= 0.3) {
-                                view.addMesh(new CubeEarth(1, -10, 1.1f * j, 1.1f * i, res));
-                            }
-                            // Ground
-                            if (random() <= 0.3) {
-                                view.addMesh(new CubeEarth(1, 1.1f * j, 1.1f * i, -10, res));
-                            }
-                        }
-                    }
-                }
-            }.start();
+
+////                @Override
+////                public void run() {
+////                    super.run();
+//            for (int i = -size; i <= size; i++) {
+//                for (int j = -size; j <= size; j++) {
+//                    // Front
+//                    view.addMesh(new CubeEarth(1, 1.1f * j, -10, 1.1f * i, res));
+//                    // Ground
+//                    view.addMesh(new CubeEarth(1, 1.1f * j, 1.1f * i, -10, res));
+//                }
+////                    }
+//            }
+////            }.start();
         }
 
         rotationMatrix = new float[16];
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
         rotationVectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         rotationListener = new SensorEventListener() {
             @Override
@@ -148,7 +186,9 @@ public class TutorialPartVI extends Activity {
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
             }
-        };
+        }
+
+        ;
         sensorManager.registerListener(rotationListener, rotationVectorSensor, SensorManager.SENSOR_DELAY_GAME);
 
     }
